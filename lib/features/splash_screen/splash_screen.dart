@@ -23,7 +23,7 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   void _navigateToNext() {
-    Timer(const Duration(seconds: 5), () {
+    Timer(const Duration(seconds: 2), () {
      context.pushReplacementNamed(AppNavigator.loginScreen);
     });
   }
