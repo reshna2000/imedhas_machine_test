@@ -1,5 +1,8 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
+import '../../presentation/bloc/orders_bloc.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/app_navigation.dart';
 import '../../../../resourses/style/colors_class.dart';
@@ -8,34 +11,27 @@ import '../../data/order_model.dart';
 
 class OrderCard extends StatelessWidget {
   final OrderModel order;
-
   const OrderCard({super.key, required this.order});
 
   Color _getStatusColor(String? status) {
     switch (status?.toLowerCase()) {
-      case 'completed':
-        return Palette.green;
-      case 'in progress':
-        return const Color(0xFFFFA726); // orange-ish
-      case 'cancelled':
-        return const Color(0xFFE53935); // red
-      default:
-        return const Color(0xFF9E9E9E); // grey
+      case 'completed': return Palette.green;
+      case 'in progress': return const Color(0xFFFFA726);
+      case 'cancelled': return const Color(0xFFE53935);
+      default: return const Color(0xFF9E9E9E);
     }
   }
 
   IconData _getStatusIcon(String? status) {
     switch (status?.toLowerCase()) {
-      case 'completed':
-        return Icons.check_circle_rounded;
-      case 'in progress':
-        return Icons.timelapse_rounded;
-      case 'cancelled':
-        return Icons.cancel_rounded;
-      default:
-        return Icons.info_outline_rounded;
+      case 'completed': return Icons.check_circle_rounded;
+      case 'in progress': return Icons.timelapse_rounded;
+      case 'cancelled': return Icons.cancel_rounded;
+      default: return Icons.info_outline_rounded;
     }
   }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +42,7 @@ class OrderCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: Palette.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.grey.shade200, width: 1),
+        border: Border.all(color: Colors.grey.shade200),
         boxShadow: [
           BoxShadow(
             color: Colors.black12.withOpacity(0.04),
@@ -60,11 +56,14 @@ class OrderCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         child: InkWell(
           borderRadius: BorderRadius.circular(16),
-          onTap: () {
-            context.pushNamed(
+          onTap: () async {
+            final result = await context.pushNamed(
               AppNavigator.editOrderScreen,
               extra: {'order': order},
             );
+            if (result == true) {
+              context.read<OrdersBloc>().add(GetOrdersEvent());
+            }
             log("Order tapped: ${order.id}");
           },
           child: Padding(
@@ -78,20 +77,15 @@ class OrderCard extends StatelessWidget {
                     color: Palette.kPrimary.withOpacity(0.08),
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: Icon(
-                    Icons.receipt_long_rounded,
-                    size: 36,
-                    color: Palette.kPrimary,
-                  ),
+                  child: Icon(Icons.receipt_long_rounded, size: 36, color: Palette.kPrimary),
                 ),
                 const SizedBox(width: 16),
 
-                // 📄 Right side: Order details
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Title + Status badge
+                      /// Order Name + Status
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -105,19 +99,14 @@ class OrderCard extends StatelessWidget {
                             ),
                           ),
                           Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 10, vertical: 5),
+                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                             decoration: BoxDecoration(
                               color: statusColor.withOpacity(0.15),
                               borderRadius: BorderRadius.circular(20),
                             ),
                             child: Row(
                               children: [
-                                Icon(
-                                  _getStatusIcon(order.status),
-                                  size: 14,
-                                  color: statusColor,
-                                ),
+                                Icon(_getStatusIcon(order.status), size: 14, color: statusColor),
                                 const SizedBox(width: 4),
                                 Text(
                                   (order.status ?? '').toUpperCase(),
@@ -132,13 +121,13 @@ class OrderCard extends StatelessWidget {
                           ),
                         ],
                       ),
+
                       const SizedBox(height: 8),
 
-                      // Customer name
+                      /// Customer
                       Row(
                         children: [
-                          const Icon(Icons.person_outline_rounded,
-                              size: 14, color: Colors.grey),
+                          const Icon(Icons.person_outline_rounded, size: 14, color: Colors.grey),
                           const SizedBox(width: 4),
                           Expanded(
                             child: AppText(
@@ -151,34 +140,35 @@ class OrderCard extends StatelessWidget {
                           ),
                         ],
                       ),
+
                       const SizedBox(height: 8),
 
+                      /// Date + Amount
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Row(
                             children: [
-                              const Icon(Icons.calendar_today,
-                                  size: 13, color: Colors.grey),
+                              const Icon(Icons.calendar_today, size: 13, color: Colors.grey),
                               const SizedBox(width: 6),
                               AppText(
                                 order.orderDate != null
-                                    ? '${order.orderDate!.day.toString().padLeft(2, '0')}/${order.orderDate!.month.toString().padLeft(2, '0')}/${order.orderDate!.year}'
-                                    : '-',
+                                    ? DateFormat('dd/MM/yyyy').format(order.orderDate!)
+                                    : 'No date',
                                 fontSize: 12,
                                 color: Colors.grey.shade700,
                               ),
+
                             ],
                           ),
                           Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 10, vertical: 5),
+                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                             decoration: BoxDecoration(
                               color: Palette.kPrimary.withOpacity(0.1),
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Text(
-                              '₹${order.amount?.toStringAsFixed(2) ?? '0.00'}',
+                              '₹${double.tryParse(order.amount.toString())?.toStringAsFixed(2) ?? '0.00'}',
                               style: const TextStyle(
                                 fontSize: 15,
                                 fontWeight: FontWeight.bold,

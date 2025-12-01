@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "381343307520",
+    "project_id": "ordermanagement-d2ff5",
+    "storage_bucket": "ordermanagement-d2ff5.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:381343307520:android:f862ac3fea65f4649dc5e5",
+        "android_client_info": {
+          "package_name": "com.reshna.order_management_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAyIsNPafwsPdstGHATY2aqKD29UsxwsOo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

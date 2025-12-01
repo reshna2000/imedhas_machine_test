@@ -84,8 +84,7 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
                               validator: validators.emailValidator,
                               label: "Email",
                               hintText: "Enter your email",
-                              controller: emailIdController
-                                ..text = "username@gmail.com",
+                              controller: emailIdController..text,
                               inputType: TextInputType.emailAddress,
                             ),
 
@@ -95,10 +94,8 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
                               inputType: TextInputType.visiblePassword,
                               label: "Password",
                               hintText: "Enter your password",
-                              controller: passwordController..text = "test@123",
+                              controller: passwordController..text,
                             ),
-
-
                           ],
                         ),
                       ),
@@ -110,26 +107,24 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
                       child: keyboardHeight > 0
                           ? const SizedBox.shrink()
                           : SafeArea(
-                        top: false,
-                        child: PrimaryButton(
-                          padding: const EdgeInsets.all(20),
-                          loading:
-                          state.authStatus == AuthStatus.loading,
-                          text: "Login",
-                          onTap: () async {
-                            if (_formKey.currentState!.validate()) {
-                              context.read<AuthBloc>().add(
-                                UserLoginEvent(
-                                  emailId: emailIdController.text
-                                      .trim(),
-                                  password: passwordController.text
-                                      .trim(),
-                                ),
-                              );
-                            }
-                          },
-                        ),
-                      ),
+                              top: false,
+                              child: PrimaryButton(
+                                padding: const EdgeInsets.all(20),
+                                loading: state.authStatus == AuthStatus.loading,
+                                text: "Login",
+                                onTap: () async {
+                                  if (_formKey.currentState!.validate()) {
+                                    context.read<AuthBloc>().add(
+                                      UserLoginEvent(
+                                        emailId: emailIdController.text.trim(),
+                                        password: passwordController.text
+                                            .trim(),
+                                      ),
+                                    );
+                                  }
+                                },
+                              ),
+                            ),
                     ),
                   ],
                 ),

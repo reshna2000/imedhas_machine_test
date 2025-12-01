@@ -3,9 +3,7 @@ import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:flutter/foundation.dart';
-import 'package:order_management_app/core/api_support.dart';
-import 'package:order_management_app/core/dio_api_client.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:order_management_app/core/enums.dart';
 
 part 'auth_event.dart';
@@ -17,39 +15,65 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   }
 
   FutureOr<void> _userLogin(
-    UserLoginEvent event,
-    Emitter<AuthState> emit,
-  ) async {
+      UserLoginEvent event,
+      Emitter<AuthState> emit,
+      ) async {
     emit(state.copyWith(authStatus: AuthStatus.loading));
 
     try {
-      final DioApiClient dioApiClient = DioApiClient();
-      final payload = {"username": event.emailId, "password": event.password};
-
-      final response = await dioApiClient.post(ApiSupport.login, data: payload);
-
-      if (kDebugMode) {
-        log(response.data.toString(), name: "authResponse");
-        log(response.statusCode.toString(), name: "authStatusCode");
-      }
-
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        emit(state.copyWith(authStatus: AuthStatus.success));
-      } else {
-        emit(
-          state.copyWith(
-            authStatus: AuthStatus.error,
-            errorMessage: "Something went wrong",
-          ),
-        );
-      }
-    } catch (e) {
-      emit(
-        state.copyWith(
-          authStatus: AuthStatus.error,
-          errorMessage: e.toString(),
-        ),
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: event.emailId,
+        password: event.password,
       );
-    } finally {}
+
+      emit(state.copyWith(authStatus: AuthStatus.success));
+    } on FirebaseAuthException catch (e, st) {
+      print("🔥 FirebaseAuthException: ${e.code} - ${e.message}");
+      print("📌 StackTrace: $st");
+
+      String message;
+      switch (e.code) {
+        case "invalid-email":
+          message = "Invalid email format";
+          break;
+        case "user-not-found":
+          message = "No user found with this email";
+          break;
+        case "wrong-password":
+          message = "Incorrect password";
+          break;
+        case "user-disabled":
+          message = "This user account is disabled";
+          break;
+        case "network-request-failed":
+          message = "Check your internet connection";
+          break;
+        case "too-many-requests":
+          message = "Too many attempts, try again later";
+          break;
+        case "invalid-credential":
+          message = "Invalid login credentials";
+          break;
+        case "captcha-check-failed":
+          message = "Security check failed, try again";
+          break;
+        default:
+          message = e.message ?? "Login failed";
+      }
+
+      emit(state.copyWith(
+        authStatus: AuthStatus.error,
+        errorMessage: message,
+      ));
+    } catch (e, st) {
+      print("🔥 Unexpected error: $e");
+      print("📌 StackTrace: $st");
+
+      emit(state.copyWith(
+        authStatus: AuthStatus.error,
+        errorMessage: "Unexpected error: ${e.toString()}",
+      ));
+    }
   }
+
 }

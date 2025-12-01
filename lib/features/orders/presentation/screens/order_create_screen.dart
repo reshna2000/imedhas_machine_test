@@ -2,12 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_icon_snackbar/flutter_icon_snackbar.dart';
 import 'package:go_router/go_router.dart';
-import 'package:order_management_app/core/size.dart';
 import 'package:order_management_app/features/authentication/presentation/widgets/app_field_with_label.dart';
 import 'package:order_management_app/features/orders/presentation/bloc/orders_bloc.dart';
 import 'package:order_management_app/resourses/widgets/app_text.dart';
 import 'package:order_management_app/resourses/widgets/primary_button.dart';
-
 import '../../../../core/enums.dart';
 import '../../../../core/validator.dart';
 import '../../../../resourses/style/colors_class.dart';
@@ -57,7 +55,6 @@ class _OrderCreateScreenState extends State<OrderCreateScreen> {
               bgColor: Palette.green,
               text: "Order Created Successfully",
             );
-
             context.read<OrdersBloc>().add(GetOrdersEvent());
             context.pop(true);
           } else if (state.status == OrderListingStatus.error) {
@@ -71,7 +68,6 @@ class _OrderCreateScreenState extends State<OrderCreateScreen> {
         },
         builder: (context, state) {
           final isLoading = state.status == OrderListingStatus.loading;
-
           return Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Form(
@@ -143,7 +139,6 @@ class _OrderCreateScreenState extends State<OrderCreateScreen> {
                             );
                             return;
                           }
-
                           context.read<OrdersBloc>().add(
                             CreateOrderEvent(
                               orderName: orderNameController.text,

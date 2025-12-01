@@ -1,10 +1,8 @@
 part of 'orders_bloc.dart';
 
-sealed class OrdersEvent extends Equatable {
+abstract class OrdersEvent extends Equatable {
   const OrdersEvent();
-}
 
-class GetOrdersEvent extends OrdersEvent {
   @override
   List<Object?> get props => [];
 }
@@ -14,43 +12,32 @@ class CreateOrderEvent extends OrdersEvent {
   final String customerName;
   final String customerAddress;
   final String amount;
-  final String status;
   final String date;
+  final String status;
 
   const CreateOrderEvent({
     required this.orderName,
     required this.customerName,
     required this.customerAddress,
     required this.amount,
-    required this.status,
     required this.date,
+    required this.status,
   });
 
   @override
-  List<Object?> get props => [
-    orderName,
-    customerName,
-    customerAddress,
-    amount,
-    status,
-    date,
-  ];
+  List<Object?> get props => [orderName, customerName, customerAddress, amount, date, status];
 }
 
+class GetOrdersEvent extends OrdersEvent {}
 class EditOrderEvent extends OrdersEvent {
   final String orderId;
   final String status;
-  EditOrderEvent({required this.orderId, required this.status});
 
-  @override
-  // TODO: implement props
-  List<Object?> get props => throw UnimplementedError();
+  EditOrderEvent({required this.orderId, required this.status});
 }
 
 class DeleteOrderEvent extends OrdersEvent {
-  final String id;
+  final String orderId;
 
-  const DeleteOrderEvent({required this.id});
-  @override
-  List<Object?> get props => [id];
+  DeleteOrderEvent({required this.orderId});
 }

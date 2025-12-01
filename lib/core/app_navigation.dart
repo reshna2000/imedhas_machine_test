@@ -31,7 +31,7 @@ class AppNavigator {
       GoRoute(
         path: '/$splashScreen',
         name: splashScreen,
-        builder: (context, state) =>  SplashScreen(),
+        builder: (context, state) =>  SplashScreen( ),
       ),
 
 

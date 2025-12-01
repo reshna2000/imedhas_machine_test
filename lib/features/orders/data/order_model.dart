@@ -1,5 +1,5 @@
-// order_model.dart
 import 'dart:convert';
+import 'package:intl/intl.dart';
 
 class OrderModel {
   final String? id;
@@ -24,24 +24,36 @@ class OrderModel {
 
   factory OrderModel.fromJson(Map<String, dynamic> json) {
     DateTime? parsedDate;
-    if (json['orderDate'] != null) {
+    final rawDate = json['orderDate'];
+
+    if (rawDate != null && rawDate.toString().trim().isNotEmpty) {
       try {
-        if (json['orderDate'] is int) {
-          parsedDate = DateTime.fromMillisecondsSinceEpoch(json['orderDate']);
-        } else if (json['orderDate'] is String) {
-          parsedDate = DateTime.tryParse(json['orderDate']);
+        if (rawDate is int) {
+          parsedDate = DateTime.fromMillisecondsSinceEpoch(rawDate);
+        } else if (rawDate is String) {
+          parsedDate = DateTime.tryParse(rawDate);
+
+          if (parsedDate == null) {
+            parsedDate = DateFormat('dd/MM/yyyy').parse(rawDate);
+          }
+
+          if (parsedDate == null) {
+            parsedDate = DateFormat('dd-MM-yyyy').parse(rawDate);
+          }
         }
       } catch (_) {
         parsedDate = null;
       }
     }
 
+    // ---- AMOUNT PARSING ----
     double? parsedAmount;
-    if (json['amount'] != null) {
-      if (json['amount'] is num) {
-        parsedAmount = (json['amount'] as num).toDouble();
-      } else if (json['amount'] is String) {
-        parsedAmount = double.tryParse(json['amount']);
+    final rawAmount = json['amount'];
+    if (rawAmount != null) {
+      if (rawAmount is num) {
+        parsedAmount = rawAmount.toDouble();
+      } else if (rawAmount is String) {
+        parsedAmount = double.tryParse(rawAmount);
       }
     }
 
@@ -61,6 +73,7 @@ class OrderModel {
     'id': id,
     'orderName': orderName,
     'customerName': customerName,
+    // Always save in ISO format for consistency
     'orderDate': orderDate?.toIso8601String(),
     'custAddress': custAddress,
     'amount': amount,
@@ -73,7 +86,7 @@ class OrderModel {
     return jsonList
         .map((e) => e is Map<String, dynamic>
         ? OrderModel.fromJson(e)
-        : OrderModel.fromJson(Map<String, dynamic>.from(e as Map)))
+        : OrderModel.fromJson(Map<String, dynamic>.from(e)))
         .toList();
   }
 

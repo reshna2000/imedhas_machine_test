@@ -69,7 +69,7 @@ class _OrderListingScreenState extends State<OrderListingScreen> {
         child: BlocBuilder<OrdersBloc, OrdersState>(
           builder: (context, state) {
             log("OrderListingStatus: ${state.status}");
-            final orders = state.orderList;
+            final orders = state.orders;
 
             if (state.status == OrderListingStatus.loading) {
               return Center(child: Lottie.asset(AssetsPaths.loadingAnimation));
@@ -106,31 +106,30 @@ class _OrderListingScreenState extends State<OrderListingScreen> {
                   const SizedBox(height: 10),
                   deviceWidth(context) > 600
                       ? Expanded(
-                          child: GridView.builder(
-                            gridDelegate:
-                                const SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: 3,
-                                  childAspectRatio: 2.2,
-                                  mainAxisSpacing: 10,
-                                  crossAxisSpacing: 10,
-                                ),
-                            itemCount: orders.length,
-                            itemBuilder: (context, index) {
-                              return OrderCard(order: orders[index]);
-                            },
-                          ),
-                        )
+                    child: GridView.builder(
+                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 3,
+                        childAspectRatio: 2.2,
+                        mainAxisSpacing: 10,
+                        crossAxisSpacing: 10,
+                      ),
+                      itemCount: orders.length,
+                      itemBuilder: (context, index) {
+                        return OrderCard(order: orders[index]);
+                      },
+                    ),
+                  )
                       : Expanded(
-                          child: RefreshIndicator(
-                            onRefresh: _refreshOrders,
-                            child: ListView.builder(
-                              itemCount: orders.length,
-                              itemBuilder: (context, index) {
-                                return OrderCard(order: orders[index]);
-                              },
-                            ),
-                          ),
-                        ),
+                    child: RefreshIndicator(
+                      onRefresh: _refreshOrders,
+                      child: ListView.builder(
+                        itemCount: orders.length,
+                        itemBuilder: (context, index) {
+                          return OrderCard(order: orders[index]);
+                        },
+                      ),
+                    ),
+                  ),
                 ],
               );
             }
