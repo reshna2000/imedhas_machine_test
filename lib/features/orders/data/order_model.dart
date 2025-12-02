@@ -34,7 +34,7 @@ class OrderModel {
           parsedDate = DateTime.tryParse(rawDate);
 
           if (parsedDate == null) {
-            parsedDate = DateFormat('dd/MM/yyyy').parse(rawDate);
+              parsedDate = DateFormat('dd/MM/yyyy').parse(rawDate);
           }
 
           if (parsedDate == null) {

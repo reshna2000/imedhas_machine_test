@@ -9,10 +9,7 @@ import 'firebase_options.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
-
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   runApp(const MyApp());
 }
@@ -25,7 +22,8 @@ class MyApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-          create: (context) => OrdersBloc(repository: OrdersRepository()),        ),
+          create: (context) => OrdersBloc(repository: OrdersRepository()),
+        ),
       ],
       child: MaterialApp.router(
         routerConfig: AppNavigator.router,

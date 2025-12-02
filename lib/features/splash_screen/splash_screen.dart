@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:ui';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lottie/lottie.dart';
@@ -17,6 +18,7 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen> {
   @override
+  @override
   void initState() {
     super.initState();
     _navigateToNext();
@@ -24,7 +26,14 @@ class _SplashScreenState extends State<SplashScreen> {
 
   void _navigateToNext() {
     Timer(const Duration(seconds: 2), () {
-     context.pushReplacementNamed(AppNavigator.loginScreen);
+      final user = FirebaseAuth.instance.currentUser;
+
+      if (user == null) {
+        context.pushReplacementNamed(AppNavigator.loginScreen);
+      } else {
+
+        context.pushReplacementNamed(AppNavigator.orderListingScreen);
+      }
     });
   }
 

@@ -1,14 +1,8 @@
-
-
-
-
-
 import 'package:flutter/material.dart';
 
 import '../../../../core/size.dart';
 import '../../../../resourses/widgets/app_text.dart';
 import '../../../../resourses/widgets/text_field_widget.dart';
-
 
 class AppFieldWithLabel extends StatefulWidget {
   final bool? isObscure;
@@ -16,7 +10,7 @@ class AppFieldWithLabel extends StatefulWidget {
   final bool isDatePicker;
   final String label;
   final String? hintText;
-  final String ? Function(String?)? validator;
+  final String? Function(String?)? validator;
   final TextEditingController controller;
 
   const AppFieldWithLabel({
@@ -26,7 +20,8 @@ class AppFieldWithLabel extends StatefulWidget {
     required this.label,
     this.inputType,
     this.hintText,
-    required this.controller, this.validator,
+    required this.controller,
+    this.validator,
   });
 
   @override
@@ -34,7 +29,6 @@ class AppFieldWithLabel extends StatefulWidget {
 }
 
 class _AppFieldWithLabelState extends State<AppFieldWithLabel> {
-
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -43,7 +37,7 @@ class _AppFieldWithLabelState extends State<AppFieldWithLabel> {
         AppText(widget.label),
         setHeight(4),
         AppTextField(
-          obscureText: widget.isObscure??false,
+          obscureText: widget.isObscure ?? false,
           validator: widget.validator,
           textInputType: widget.inputType,
           hintText: widget.hintText,
@@ -54,4 +48,3 @@ class _AppFieldWithLabelState extends State<AppFieldWithLabel> {
     );
   }
 }
-
